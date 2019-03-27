@@ -1,13 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.io.*,
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    import="java.io.*,
     org.apache.poi.poifs.filesystem.POIFSFileSystem,
     org.apache.poi.hssf.record.*,
     org.apache.poi.hssf.model.*,
     org.apache.poi.hssf.usermodel.*,
-    org.apache.poi.hssf.util.*,
-    org.apache.poi.poifs.filesystem.POIFSFileSystem,
-    org.apache.poi.ss.usermodel.*,
-    org.apache.poi.xssf.usermodel.*" %>
+    org.apache.poi.hssf.util.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,13 +16,12 @@
 <body>
 <%
 String excelfile="D:\\Excel1.xls";
-String excelfile2="D:\\Excel1.xlsx"; 
 try{
-	//POIFSFileSystem fs=new POIFSFileSystem(new FileInputStream(excelfile2));
+	POIFSFileSystem fs=new POIFSFileSystem(new FileInputStream(excelfile));
 	
 	
 	//워크북 생성
-	XSSFWorkbook workbook=new XSSFWorkbook(new FileInputStream(excelfile2));
+	HSSFWorkbook workbook=new HSSFWorkbook(fs);
 	
 	int sheetNum=workbook.getNumberOfSheets();
 	
@@ -36,13 +33,13 @@ try{
 		Sheet Number <%=k %> <br>
 		Sheet Name <%=workbook.getSheetName(k) %> <br>
 		<% 
-		XSSFSheet sheet=workbook.getSheetAt(k);
+		HSSFSheet sheet=workbook.getSheetAt(k);
 		int rows=sheet.getPhysicalNumberOfRows();
 		
 		for(int r=0; r<rows; r++){
 			
 			//시트에 대한 행을 하나씩 추출
-			XSSFRow row=sheet.getRow(r);
+			HSSFRow row=sheet.getRow(r);
 			if(row!=null){
 				int cells= row.getPhysicalNumberOfCells();
 		%>
@@ -52,34 +49,34 @@ try{
 			
 				
 				//행에 대한 셀을 하나씩 추출하여 셀 타입에 따라 처리
-			XSSFCell cell =row.getCell(c);
+			HSSFCell cell =row.getCell(c);
 			if(cell!=null){
 				String value=null;
 				
 				switch(cell.getCellType()){
 				
-				case XSSFCell.CELL_TYPE_FORMULA:
+				case HSSFCell.CELL_TYPE_FORMULA:
 					value="FORMULA value=" + cell.getCellFormula();
 					break;
-				case XSSFCell.CELL_TYPE_NUMERIC:
+				case HSSFCell.CELL_TYPE_NUMERIC:
 					value="NUMERIC value=" + cell.getNumericCellValue();
 					break;
-				case XSSFCell.CELL_TYPE_STRING:
+				case HSSFCell.CELL_TYPE_STRING:
 					value="STRING value=" + cell.getStringCellValue();
 					break;
-				case XSSFCell.CELL_TYPE_BLANK:
+				case HSSFCell.CELL_TYPE_BLANK:
 					value=null;
 					break;
-				case XSSFCell.CELL_TYPE_BOOLEAN:
+				case HSSFCell.CELL_TYPE_BOOLEAN:
 					value="BOOLEAN value=" + cell.getBooleanCellValue();
 					break;
-				case XSSFCell.CELL_TYPE_ERROR:
+				case HSSFCell.CELL_TYPE_ERROR:
 					value="ERROR value=" + cell.getErrorCellValue();
 					break;
 					default:
 				}
 				%>
-				<%="CELL col="+ cell.getColumnIndex() + "VALUE=" + value %> <br>
+				<%="CELL col=" + cell.getCellNum() + "VALUE=" + value %> <br>
 				<% 
 			}
 		}
